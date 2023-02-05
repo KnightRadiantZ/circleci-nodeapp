@@ -3,5 +3,5 @@ it('test that pass', () => {
 })
 
 it('test that fail', () => {
-    expect(2+2).toEqual(4)
+    expect(2+2).toEqual(3)
 })
