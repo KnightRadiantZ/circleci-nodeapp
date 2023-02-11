@@ -7,7 +7,7 @@ jobs:
       - checkout # Checkout this branch
       - run:
           name: Show current branch
-          command: echo ${CURRENT_BRANCH}
+          command: echo ${CIRCLE_BRANCH}
       - restore_cache: # Restore cache if available so it is faster
           key: v1-dependencies-{{ checksum "package.json"}}
       # ------------------------------------
@@ -40,7 +40,7 @@ jobs:
       - checkout # Checkout this branch
       - run:
           name: Show current branch
-          command: echo ${CURRENT_BRANCH}
+          command: echo ${CIRCLE_BRANCH}
       - run:
           name: Installing AWS CLI
           working_directory: /
