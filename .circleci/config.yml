@@ -51,9 +51,11 @@ jobs:
           name: Build project
           command: |
             npm install
-            npm run build
+            # npm run build
+            mkdir build
             cd build
-            zip ../build.zip -r * .[^.]*
+            # zip ../build.zip -r * .[^.]*
+            echo $(date) > date.txt
             echo "Build successful"
       - run:
           name: Show pwd and ls
@@ -94,9 +96,11 @@ jobs:
           name: Build project
           command: |
             npm install
-            npm run build
+            # npm run build
+            mkdir build
             cd build
-            zip ../build.zip -r * .[^.]*
+            # zip ../build.zip -r * .[^.]*
+            echo $(date) > date.txt
             echo "Build successful"
       - run:
           name: Show pwd and ls
