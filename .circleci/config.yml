@@ -114,7 +114,7 @@ jobs:
           name: Deploy project to AWS Cloudfront
           # aws cli commands doc: https://docs.aws.amazon.com/cli/latest/reference/cloudfront/create-invalidation.html
           command: |
-            aws configure set preview.cloudfront
+            aws configure set preview.cloudfront true
             if [ "${CIRCLE_BRANCH}" == "master" ]
             then
               aws cloudfront create-invalidation --distribution-id ${AWS_DISTRIBUTION_ID_PROD} --paths /\*
