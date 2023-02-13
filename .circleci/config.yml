@@ -55,8 +55,7 @@ jobs:
             mkdir build
             cd build
             # zip ../build.zip -r * .[^.]*
-            echo $(date) > date.txt
-            echo "<html><h1>Hello Joseph Evasco</h1></html>" > index.html
+            echo "<html><h1>Hello Joseph Evasco, today is $(date)</h1></html>" > index.html
             echo "Build successful"
       - run:
           name: Show pwd and ls
@@ -101,8 +100,7 @@ jobs:
             mkdir build
             cd build
             # zip ../build.zip -r * .[^.]*
-            echo $(date) > date.txt
-            echo "<html><h1>Hello Joseph Evasco</h1></html>" > index.html
+            echo "<html><h1>Hello Joseph Evasco, today is $(date)</h1></html>" > index.html
             echo "Build successful"
       - run:
           name: Show pwd and ls
