@@ -41,10 +41,6 @@ aliases:
       command: |
         sudo apt-get update -y
         sudo apt-get install -y dpkg fakeroot
-  - &generate-builds
-    run:
-      name: Generate Builds
-      command: npm run make
   - &save-cache
     save_cache: # Save cache so it is faster next time
       key: v1-dependencies-{{ checksum "package.json"}}
@@ -90,12 +86,17 @@ jobs:
     executor: docker-executor
     steps:
       - checkout # Checkout this branch
+      - run:
+          name: Update NPM
+          command: "sudo npm install -g npm"
       - *show-current-branch # call alias with "*"
       - *restore-cache
       - *install-dependencies
       - *install-dpkg-fakeroot
       - *save-cache
-      - *generate-builds
+      - run:
+          name: Generate Builds
+          command: npm run make
       - store_artifacts:
           path: ~/repo/out/make
       - *run-jest-unit-test
