@@ -7,7 +7,7 @@ executors:
   # declare executor for docker and work-dir
   docker-executor:
     docker:
-      - image: cimg/node:11
+      - image: cimg/node:14.17.5
     working_directory: ~/repo
 
 # --------------------------------------------------
