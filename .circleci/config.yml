@@ -86,9 +86,6 @@ jobs:
     executor: docker-executor
     steps:
       - checkout # Checkout this branch
-      - run:
-          name: Update NPM
-          command: "sudo npm install -g npm"
       - *show-current-branch # call alias with "*"
       - *restore-cache
       - *install-dependencies
