@@ -42,6 +42,7 @@
         },
         {
           "name": "@electron-forge/maker-deb",
+          "description": "sampling deb distro",
           "config": {}
         }
       ]
