@@ -39,11 +39,11 @@
           "platforms": [
             "linux"
           ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "description": "sampling deb distro",
-          "config": {}
+        // },
+        // {
+        //   "name": "@electron-forge/maker-deb",
+        //   "description": "sampling deb distro",
+        //   "config": {}
         }
       ]
     }
