@@ -1,10 +1,11 @@
 {
-  "name": "app",
+  "name": "my-electron-app",
+  "productName": "my-electron-app",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "My Electron application description",
+  "main": "src/index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --verbose ./specs/jest",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
@@ -12,7 +13,10 @@
     "lint": "echo \"No linting configured\""
   },
   "keywords": [],
-  "author": "",
+  "author": {
+    "name": "Joseph Evasco",
+    "email": "jevasco@slack-corp.com"
+  },
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
@@ -37,6 +41,7 @@
         {
           "name": "@electron-forge/maker-zip",
           "platforms": [
+            "darwin",
             "linux"
           ]
         }
