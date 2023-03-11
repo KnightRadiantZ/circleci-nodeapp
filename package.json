@@ -5,7 +5,7 @@
   "description": "My Electron application description",
   "main": "src/index.js",
   "scripts": {
-    "test": "jest --verbose ./specs/jest",
+    "unit-test": "jest --verbose ./specs/jest",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",

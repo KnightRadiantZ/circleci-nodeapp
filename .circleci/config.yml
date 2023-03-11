@@ -49,7 +49,7 @@ aliases:
   - &run-jest-unit-test
     run:
       name: Run jest unit test
-      command: npm test
+      command: npm run unit-test
   - &install-aws-cli
     run:
       name: Installing AWS CLI
