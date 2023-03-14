@@ -32,12 +32,12 @@ aliases:
       command: echo ${CIRCLE_BRANCH}
   - &save-cache
     save_cache: # Save cache so it is faster next time
-      key: $PLATFORM_OS-{{ checksum "package.json"}}
+      key: ${PLATFORM_OS}-dependencies-{{ checksum "package.json"}}
       paths:
         - node_modules
   - &restore-cache
     restore_cache: # Restore cache if available so it is faster
-      key: $PLATFORM_OS-{{ checksum "package.json"}}
+      key: ${PLATFORM_OS}-dependencies-{{ checksum "package.json"}}
   - &install-dependencies
     run:
       # ------------------------------------
@@ -179,18 +179,18 @@ workflows:
   build_and_deploy:
     jobs:
       - build-macos
-      - build
-      - deploy-to-aws-s3:
-          requires:
-            - build
-          filters:
-            branches:
-              only:
-                - master
-      - deploy-to-aws-cloudfront:
-          requires:
-            - deploy-to-aws-s3
-          filters:
-            branches:
-              only:
-                - master
+      # - build
+      # - deploy-to-aws-s3:
+      #     requires:
+      #       - build
+      #     filters:
+      #       branches:
+      #         only:
+      #           - master
+      # - deploy-to-aws-cloudfront:
+      #     requires:
+      #       - deploy-to-aws-s3
+      #     filters:
+      #       branches:
+      #         only:
+      #           - master
