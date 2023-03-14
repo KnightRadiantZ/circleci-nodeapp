@@ -32,7 +32,7 @@ aliases:
       command: echo ${CIRCLE_BRANCH}; echo ${PLATFORM_OS}
   - &save-cache
     save_cache: # Save cache so it is faster next time
-      key: {{ echo "${PLATFORM_OS}" }}-dependencies-{{ checksum "package.json"}}
+      key: key-{{ .Environment.PLATFORM_OS }}-{{ checksum "package.json"}}
       paths:
         - node_modules
   - &restore-cache
