@@ -153,7 +153,8 @@ jobs:
             fi
   build-macos:
     # call executor define at top
-    executor: macos-executor
+    executor: 
+      name: macos-executor
       os: macos
     steps:
       # Commands will execute in macOS container
