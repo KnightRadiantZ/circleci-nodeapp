@@ -9,6 +9,11 @@ executors:
     docker:
       - image: cimg/node:14.17.5
     working_directory: ~/repo
+  macos-executor:
+    macos:
+      xcode: "14.2.0"
+    resource_class: macos.x86.medium.gen2
+    working_directory: ~/repo
 
 # --------------------------------------------------
 # aliases are common function likes for runs
@@ -141,9 +146,8 @@ jobs:
               aws cloudfront create-invalidation --distribution-id ${AWS_DISTRIBUTION_ID_DEV} --paths /\*
             fi
   build-macos:
-    macos:
-      xcode: "14.2.0"
-    resource_class: macos.x86.medium.gen2
+    # call executor define at top
+    executor: macos-executor
     steps:
       # Commands will execute in macOS container
       # with Xcode 14.2.0 installed
