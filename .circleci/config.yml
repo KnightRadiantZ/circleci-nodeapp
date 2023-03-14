@@ -150,6 +150,18 @@ jobs:
       - run: 
           name: Show xcodebuild version
           command: xcodebuild -version    
+      - checkout # Checkout this branch
+      - *show-current-branch # call alias with "*"
+      - *restore-cache
+      - *install-dependencies
+      - *install-dpkg-fakeroot
+      - *save-cache
+      - run:
+          name: Generate Builds
+          command: npm run make
+      - store_artifacts:
+          path: ~/repo/out/make
+      - *run-jest-unit-test
 
 workflows:
   build_and_deploy:
