@@ -152,10 +152,10 @@ jobs:
           command: xcodebuild -version    
       - checkout # Checkout this branch
       - *show-current-branch # call alias with "*"
-      - *restore-cache
+      # - *restore-cache
       - *install-dependencies
       - *install-dpkg-fakeroot
-      - *save-cache
+      # - *save-cache
       - run:
           name: Generate Builds
           command: npm run make
