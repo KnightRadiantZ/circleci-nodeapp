@@ -4,12 +4,18 @@ version: 2.1
 # executors are common function likes for execution
 # --------------------------------------------------
 executors:
-  # declare executor for docker and work-dir
+  # executor environment for linux or generic cli
   docker-executor:
     docker:
       - image: cimg/node:14.17.5
     working_directory: ~/repo
+  # executor environment for macos
   macos-executor:
+    parameters:
+      os:
+        type: string
+    environment:
+      PLATFORM_OS: << parameters.os >>
     macos:
       xcode: "14.2.0"
     resource_class: macos.x86.medium.gen2
@@ -24,9 +30,14 @@ aliases:
     run:
       name: Show current branch
       command: echo ${CIRCLE_BRANCH}
+  - &save-cache
+    save_cache: # Save cache so it is faster next time
+      key: $PLATFORM_OS-{{ checksum "package.json"}}
+      paths:
+        - node_modules
   - &restore-cache
     restore_cache: # Restore cache if available so it is faster
-      key: v1-dependencies-{{ checksum "package.json"}}
+      key: $PLATFORM_OS-{{ checksum "package.json"}}
   - &install-dependencies
     run:
       # ------------------------------------
@@ -46,11 +57,6 @@ aliases:
       command: |
         sudo apt-get update -y
         sudo apt-get install -y dpkg fakeroot
-  - &save-cache
-    save_cache: # Save cache so it is faster next time
-      key: v1-dependencies-{{ checksum "package.json"}}
-      paths:
-        - node_modules
   - &run-jest-unit-test
     run:
       name: Run jest unit test
@@ -148,6 +154,7 @@ jobs:
   build-macos:
     # call executor define at top
     executor: macos-executor
+      os: macos
     steps:
       # Commands will execute in macOS container
       # with Xcode 14.2.0 installed
@@ -156,10 +163,10 @@ jobs:
           command: xcodebuild -version    
       - checkout # Checkout this branch
       - *show-current-branch # call alias with "*"
-      # - *restore-cache
+      - *restore-cache
       - *install-dependencies
       # - *install-dpkg-fakeroot
-      # - *save-cache
+      - *save-cache
       - run:
           name: Generate Builds
           command: npm run make
