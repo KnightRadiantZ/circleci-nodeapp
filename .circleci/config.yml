@@ -1,7 +1,7 @@
 version: 2.1
 
 # --------------------------------------------------
-# executors are common function likes for execution
+# executors: common execution environment
 # --------------------------------------------------
 executors:
   # executor environment for linux or generic cli
@@ -32,7 +32,7 @@ aliases:
       command: echo ${CIRCLE_BRANCH}; echo ${PLATFORM_OS}
   - &save-cache
     save_cache: # Save cache so it is faster next time
-      key: {{ .Environment.PLATFORM_OS }}-dependencies-{{ checksum "package.json"}}
+      key: {{ echo "${PLATFORM_OS}" }}-dependencies-{{ checksum "package.json"}}
       paths:
         - node_modules
   - &restore-cache
