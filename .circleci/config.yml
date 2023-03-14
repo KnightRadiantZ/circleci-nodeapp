@@ -26,10 +26,10 @@ executors:
 # --------------------------------------------------
 aliases:
   # declare alias for this run using "&"
-  - &show-current-branch
+  - &echo-some-stuff
     run:
-      name: Show current branch
-      command: echo ${CIRCLE_BRANCH}
+      name: Show current branch, platform os
+      command: echo ${CIRCLE_BRANCH}; echo ${PLATFORM_OS}
   - &save-cache
     save_cache: # Save cache so it is faster next time
       key: ${PLATFORM_OS}-dependencies-{{ checksum "package.json"}}
@@ -97,7 +97,7 @@ jobs:
     executor: docker-executor
     steps:
       - checkout # Checkout this branch
-      - *show-current-branch # call alias with "*"
+      - *echo-some-stuff # call alias with "*"
       - *restore-cache
       - *install-dependencies
       - *install-dpkg-fakeroot
@@ -114,7 +114,7 @@ jobs:
     executor: docker-executor
     steps:
       - checkout # Checkout this branch
-      - *show-current-branch # call alias with "*"
+      - *echo-some-stuff # call alias with "*"
       - *install-aws-cli
       - *build-project
       - *show-pwd-then-ls
@@ -135,7 +135,7 @@ jobs:
     executor: docker-executor
     steps:
       - checkout # Checkout this branch
-      - *show-current-branch # call alias with "*"
+      - *echo-some-stuff # call alias with "*"
       - *install-aws-cli
       - *build-project
       - *show-pwd-then-ls
@@ -163,11 +163,11 @@ jobs:
           name: Show xcodebuild version
           command: xcodebuild -version    
       - checkout # Checkout this branch
-      - *show-current-branch # call alias with "*"
-      - *restore-cache
+      - *echo-some-stuff # call alias with "*"
+      # - *restore-cache
       - *install-dependencies
       # - *install-dpkg-fakeroot
-      - *save-cache
+      # - *save-cache
       - run:
           name: Generate Builds
           command: npm run make
