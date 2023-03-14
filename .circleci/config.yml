@@ -32,7 +32,7 @@ aliases:
       command: echo ${CIRCLE_BRANCH}; echo ${PLATFORM_OS}
   - &save-cache
     save_cache: # Save cache so it is faster next time
-      key: ${PLATFORM_OS}-dependencies-{{ checksum "package.json"}}
+      key: {{ .Environment.PLATFORM_OS }}-dependencies-{{ checksum "package.json"}}
       paths:
         - node_modules
   - &restore-cache
@@ -167,7 +167,7 @@ jobs:
       # - *restore-cache
       - *install-dependencies
       # - *install-dpkg-fakeroot
-      # - *save-cache
+      - *save-cache
       - run:
           name: Generate Builds
           command: npm run make
