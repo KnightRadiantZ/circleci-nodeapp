@@ -161,10 +161,14 @@ jobs:
           command: npm run make
       - store_artifacts:
           path: ~/repo/out/make
+      - run:
+          command: |
+            appFolder="$(basename out/make/zip/darwin/x64/*.zip .zip)"
+            echo $appFolder
       - persist_to_workspace:
           root: out
           paths:
-            - /
+            - $appFolder
       - *run-jest-unit-test
 
   # build-linux:
