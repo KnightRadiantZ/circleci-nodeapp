@@ -160,7 +160,7 @@ jobs:
           name: Generate Builds
           command: npm run make
       - store_artifacts:
-          path: ~/repo/out
+          path: ~/repo/out/make
       - persist_to_workspace:
           root: repo
           paths:
