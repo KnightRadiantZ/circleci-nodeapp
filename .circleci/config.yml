@@ -177,11 +177,17 @@ jobs:
   playwright-macos:
     executor: macos-executor
     steps:
-      - checkout-install-deps
-          # os: $MAC_OS_STRING
+      - checkout # Checkout this branch
+      - *echo-some-stuff # call alias with "*"
+      # - run: echo "Platform OS = << parameters.os >>"
+      # - run: echo "<< parameters.os1 >>" > /tmp/platform-os
+      - *restore-cache
+      - *install-dependencies
+      - *save-cache
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
           at: ~/repo/out
+      - run: ls -ltR ~/repo/out
       # unzip app file
       # test local to read from unzip app file
       # run test here
@@ -236,6 +242,9 @@ workflows:
   build_and_deploy:
     jobs:
       - build-macos
+      - playwright-macos
+          requires:
+            - build-macos
       # - build-linux
       # - deploy-to-aws-s3:
       #     requires:
