@@ -162,9 +162,9 @@ jobs:
       - store_artifacts:
           path: ~/repo/out/make
       - persist_to_workspace:
-          root: repo
+          root: out
           paths:
-            - out
+            - /
       - *run-jest-unit-test
 
   # build-linux:
