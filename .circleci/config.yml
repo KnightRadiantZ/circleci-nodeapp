@@ -195,6 +195,7 @@ jobs:
       - run: 
           command: |
             ls -ltR ~/repo/out
+      - run: npm run pw-test
       # unzip app file
       # test local to read from unzip app file
       # run test here
