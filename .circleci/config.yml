@@ -25,13 +25,12 @@ executors:
 
 # --------------------------------------------------
 # aliases: common steps
+# - use & to define alias and * to access it
 # --------------------------------------------------
 aliases:
-  # declare alias for this run using "&"
-  - &echo-some-stuff
-    run:
-      name: Show current branch
-      command: echo "Branch = ${CIRCLE_BRANCH}"
+  # --------------------------------------------------
+  # macos aliases: common steps for macos
+  # --------------------------------------------------
   - &save-cache-macos
     # run: cat /tmp/platform-os
     save_cache: # Save cache so it is faster next time
@@ -44,6 +43,12 @@ aliases:
     restore_cache: # Restore cache if available so it is faster
       # key: ckey-{{ checksum "/tmp/platform-os" }}-{{ checksum "package.json" }}
       key: ckey-macos-{{ checksum "package.json" }}
+  # --------------------------------------------------
+  # --------------------------------------------------
+  - &echo-some-stuff
+    run:
+      name: Show current branch
+      command: echo "Branch = ${CIRCLE_BRANCH}"
   - &install-dependencies
     run:
       # ------------------------------------
@@ -137,19 +142,20 @@ jobs:
       - run:
           name: Generate Builds
           command: npm run make
-      - store_artifacts:
-          path: ~/proj/out/make
       - run:
+          name: See generated build (for future debugging)
           command: |
             ls -ltR ~/proj/out
             export APP_FOLDER="$(basename out/make/zip/darwin/x64/*.zip .zip)"
             echo $APP_FOLDER
+      - store_artifacts:
+          path: ~/proj/out/make
       - persist_to_workspace:
           root: out
           paths:
             - my-electron-app-darwin-x64
       - *run-jest-unit-test
-
+  # job: run ui e2e test using playwright on macos
   test-ui-e2e-pw-macos:
     executor: macos-executor
     steps:
@@ -158,15 +164,19 @@ jobs:
           # Must be absolute path or relative path from working_directory
           at: ~/proj/out
       - run: 
+          name: See attached workspace and create screenshot dir
           command: |
             ls -ltR ~/proj/out
             mkdir ~/proj/out/screenshot
       - run: 
+          name: Run ui e2e tests using playwright
           command: | 
             npm run
             npm run pw-test
       - store_artifacts:
           path: ~/proj/out/screenshot
+      - store_test_results:
+          path: ~proj/out/reporter
 
   # --------------------------------------------------
   # linux jobs: different jobs configurations for linux
