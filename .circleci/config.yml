@@ -163,12 +163,12 @@ jobs:
           path: ~/repo/out/make
       - run:
           command: |
-            $env:APP_FOLDER = "$(basename out/make/zip/darwin/x64/*.zip .zip)"
-            echo $env:APP_FOLDER
+            export APP_FOLDER="$(basename out/make/zip/darwin/x64/*.zip .zip)"
+            echo $APP_FOLDER
       - persist_to_workspace:
           root: out
           paths:
-            - $env:APP_FOLDER
+            - $APP_FOLDER
       - *run-jest-unit-test
 
   # build-linux:
