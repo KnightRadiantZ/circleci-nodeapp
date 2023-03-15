@@ -59,12 +59,14 @@ test.only('As a user: Test I can launch app, type text into input and verify dis
 
 	await window.waitForSelector('h1');
 	const text1 = await window.$eval('[data-qa="title"]', (el) => el.textContent);
+	await window.screenshot({ path: 'out/screenshot/window1-screenshot.png' });
 	expect(text1).toContain('Hello World!');
 
 	const textToType = 'Hello Universe!';
 	await window.type('[data-qa="textInput"]', textToType);
 	await window.click('[data-qa="displayTextButton"]');
 	const text2 = await window.$eval('#displayDiv', (el) => el.textContent);
+	await window.screenshot({ path: 'out/screenshot/window2-screenshot.png' });
 	expect(text2).toContain(textToType);
 
 // Click on Canvases in sidebar

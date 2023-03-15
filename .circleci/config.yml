@@ -195,10 +195,13 @@ jobs:
       - run: 
           command: |
             ls -ltR ~/repo/out
+            mkdir ~/repo/out/screenshot
       - run: 
           command: | 
             npm run
             npm run pw-test
+      - store_artifacts:
+          path: ~/repo/out/screenshot
       # unzip app file
       # test local to read from unzip app file
       # run test here
