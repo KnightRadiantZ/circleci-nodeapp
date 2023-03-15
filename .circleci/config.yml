@@ -160,11 +160,11 @@ jobs:
           name: Generate Builds
           command: npm run make
       - store_artifacts:
-          path: ~/repo/out/make
+          path: ~/repo/out
       - persist_to_workspace:
-          root: out
+          root: repo
           paths:
-            - make
+            - out
       - *run-jest-unit-test
 
   # build-linux:
@@ -187,7 +187,9 @@ jobs:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
           at: ~/repo/out
-      - run: ls -ltR ~/repo/out
+      - run: 
+          command: |
+            ls -ltR ~/repo/out
       # unzip app file
       # test local to read from unzip app file
       # run test here
