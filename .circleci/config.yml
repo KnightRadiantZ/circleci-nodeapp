@@ -242,7 +242,7 @@ workflows:
   build_and_deploy:
     jobs:
       - build-macos
-      - playwright-macos
+      - playwright-macos:
           requires:
             - build-macos
       # - build-linux
