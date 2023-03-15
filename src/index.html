@@ -4,9 +4,23 @@
     <meta charset="UTF-8" />
     <title>Hello World!</title>
     <link rel="stylesheet" href="index.css" />
+    <script>
+      function displayText() {
+        var inputText = document.getElementById("inputField").value;
+        var displayDiv = document.getElementById("displayDiv");
+        displayDiv.innerText = "You entered: " + inputText;
+      }
+    </script>
   </head>
   <body>
-    <h1>💖 Hello World!</h1>
-    <p>Welcome to your Electron application.</p>
+    <div data-qa="title">
+      <h1>💖 Hello World!</h1>
+      <p>Welcome to your Electron application.</p>
+      </div>
+    <div>
+      <input data-qa="textInput" type="text" id="inputField" placeholder="Enter text here...">
+      <button data-qa="displayTextButton" onclick="displayText()">Display Text</button>
+    </div>
+    <div data-qa="displayedText" id="displayDiv"></div>
   </body>
 </html>
