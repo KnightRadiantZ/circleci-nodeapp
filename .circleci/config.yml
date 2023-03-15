@@ -176,7 +176,7 @@ jobs:
       - store_artifacts:
           path: ~/proj/out/screenshot
       - store_test_results:
-          path: ~proj/out/reporter
+          path: ~proj/out/report
 
   # --------------------------------------------------
   # linux jobs: different jobs configurations for linux
