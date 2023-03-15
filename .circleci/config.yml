@@ -8,7 +8,7 @@ executors:
   docker-executor:
     docker:
       - image: cimg/node:14.17.5
-    working_directory: ~/repo
+    working_directory: ~/proj
   # executor environment for macos
   macos-executor:
     # example of using parameters and then passing it to environment var
@@ -21,7 +21,7 @@ executors:
     macos:
       xcode: "14.2.0"
     resource_class: macos.x86.medium.gen2
-    working_directory: ~/repo
+    working_directory: ~/proj
 
 # --------------------------------------------------
 # aliases: common steps
@@ -32,14 +32,14 @@ aliases:
     run:
       name: Show current branch
       command: echo "Branch = ${CIRCLE_BRANCH}"
-  - &save-cache
+  - &save-cache-macos
     # run: cat /tmp/platform-os
     save_cache: # Save cache so it is faster next time
       # key: ckey-{{ checksum "/tmp/platform-os" }}-{{ checksum "package.json" }}
       key: ckey-macos-{{ checksum "package.json" }}
       paths:
         - node_modules
-  - &restore-cache
+  - &restore-cache-macos
     # run: cat /tmp/platform-os
     restore_cache: # Restore cache if available so it is faster
       # key: ckey-{{ checksum "/tmp/platform-os" }}-{{ checksum "package.json" }}
@@ -100,43 +100,32 @@ aliases:
 # --------------------------------------------------
 # commands: common full steps block
 # --------------------------------------------------
-# commands:
-#   # checkout branch and run install deps with caching based on runtime platform os
-#   checkout-install-deps:
-#     # parameters:
-#     #   os1:
-#     #     type: string
-#     steps:
-#       - checkout # Checkout this branch
-#       - *echo-some-stuff # call alias with "*"
-#       - run: echo "Platform OS = << parameters.os >>"
-#       - run: echo "<< parameters.os1 >>" > /tmp/platform-os
-#       - *restore-cache
-#       - *install-dependencies
-#       - *save-cache
-#   # build and run makers to package (zip) electron app for runtime platform os
-#   build:
-#     parameters:
-#       os:
-#         type: string
-#     steps:
-#       - checkout-install-deps
-#           # os1: << parameters.os >>
-#       - run:
-#           name: Generate Builds
-#           command: npm run make
-#       - store_artifacts:
-#           path: ~/repo/out/make
-#       - persist_to_workspace:
-#           root: out
-#           paths:
-#             - make
-#       - *run-jest-unit-test
+commands:
+  # --------------------------------------------------
+  # macos commands: common full steps block for macos
+  # --------------------------------------------------
+  # checkout branch and run install deps with caching based on runtime platform os
+  install-deps-macos:
+    # parameters:
+    #   os1:
+    #     type: string
+    steps:
+      - *echo-some-stuff # call alias with "*"
+      - run: 
+          command: |
+            xcodebuild -version
+      - checkout # Checkout this branch
+      - *restore-cache-macos
+      - *install-dependencies # TODO: is this only requires if restore-cache-macos was not able to find a cache
+      - *save-cache-macos
 
 # --------------------------------------------------
 # jobs: different jobs configurations
 # --------------------------------------------------
 jobs:
+  # --------------------------------------------------
+  # macos jobs: different jobs configurations for macos
+  # --------------------------------------------------
   # job: build electron app on macos
   build-macos:
     # call executor define at top with parameter value pass (not really used)
@@ -144,26 +133,15 @@ jobs:
       name: macos-executor
       # os: macos
     steps:
-      # Commands will execute in macOS container
-      # with Xcode 14.2.0 installed
-      - run: 
-          name: Show xcodebuild version
-          command: xcodebuild -version
-      - checkout # Checkout this branch
-      - *echo-some-stuff # call alias with "*"
-      # - run: echo "Platform OS = << parameters.os >>"
-      # - run: echo "<< parameters.os1 >>" > /tmp/platform-os
-      - *restore-cache
-      - *install-dependencies
-      - *save-cache
+      - install-deps-macos
       - run:
           name: Generate Builds
           command: npm run make
       - store_artifacts:
-          path: ~/repo/out/make
+          path: ~/proj/out/make
       - run:
           command: |
-            ls -ltR ~/repo/out
+            ls -ltR ~/proj/out
             export APP_FOLDER="$(basename out/make/zip/darwin/x64/*.zip .zip)"
             echo $APP_FOLDER
       - persist_to_workspace:
@@ -172,39 +150,34 @@ jobs:
             - my-electron-app-darwin-x64
       - *run-jest-unit-test
 
+  test-ui-e2e-pw-macos:
+    executor: macos-executor
+    steps:
+      - install-deps-macos
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: ~/proj/out
+      - run: 
+          command: |
+            ls -ltR ~/proj/out
+            mkdir ~/proj/out/screenshot
+      - run: 
+          command: | 
+            npm run
+            npm run pw-test
+      - store_artifacts:
+          path: ~/proj/out/screenshot
+
+  # --------------------------------------------------
+  # linux jobs: different jobs configurations for linux
+  # --------------------------------------------------
+  # job: build electron app on linux
   # build-linux:
   #   # call executor define at top
   #   executor: docker-executor
   #   steps:
   #     - build:
   #         os: "linux"
-
-  playwright-macos:
-    executor: macos-executor
-    steps:
-      - checkout # Checkout this branch
-      - *echo-some-stuff # call alias with "*"
-      # - run: echo "Platform OS = << parameters.os >>"
-      # - run: echo "<< parameters.os1 >>" > /tmp/platform-os
-      - *restore-cache
-      - *install-dependencies
-      - *save-cache
-      - attach_workspace:
-          # Must be absolute path or relative path from working_directory
-          at: ~/repo/out
-      - run: 
-          command: |
-            ls -ltR ~/repo/out
-            mkdir ~/repo/out/screenshot
-      - run: 
-          command: | 
-            npm run
-            npm run pw-test
-      - store_artifacts:
-          path: ~/repo/out/screenshot
-      # unzip app file
-      # test local to read from unzip app file
-      # run test here
 
   deploy-to-aws-s3:
     # call executor define at top
@@ -222,9 +195,9 @@ jobs:
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]
             then
-              aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_PROD} --delete
+              aws --region ${AWS_REGION} s3 sync ~/proj/build s3://${AWS_BUCKET_PROD} --delete
             else
-              aws --region ${AWS_REGION} s3 sync ~/repo/build s3://${AWS_BUCKET_DEV} --delete
+              aws --region ${AWS_REGION} s3 sync ~/proj/build s3://${AWS_BUCKET_DEV} --delete
             fi
 
   deploy-to-aws-cloudfront:
@@ -253,10 +226,10 @@ jobs:
 # workflows: 
 # --------------------------------------------------
 workflows:
-  build_and_deploy:
+  build-test-app-macos:
     jobs:
       - build-macos
-      - playwright-macos:
+      - test-ui-e2e-pw-macos:
           requires:
             - build-macos
       # - build-linux
