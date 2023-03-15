@@ -11,8 +11,10 @@ executors:
     working_directory: ~/repo
   # executor environment for macos
   macos-executor:
+    # example of using parameters and then passing it to environment var
     parameters:
       os:
+        default: "macos"
         type: string
     environment:
       PLATFORM_OS: << parameters.os >>
@@ -22,20 +24,22 @@ executors:
     working_directory: ~/repo
 
 # --------------------------------------------------
-# aliases are common function likes for runs
+# aliases: common steps
 # --------------------------------------------------
 aliases:
   # declare alias for this run using "&"
   - &echo-some-stuff
     run:
-      name: Show current branch, platform os
-      command: echo ${CIRCLE_BRANCH}; echo ${PLATFORM_OS} > /tmp/platform-os
+      name: Show current branch
+      command: echo "Branch = ${CIRCLE_BRANCH}"
   - &save-cache
+    run: cat /tmp/platform-os
     save_cache: # Save cache so it is faster next time
       key: ckey-{{ checksum "/tmp/platform-os" }}-{{ checksum "package.json" }}
       paths:
         - node_modules
   - &restore-cache
+    run: cat /tmp/platform-os
     restore_cache: # Restore cache if available so it is faster
       key: ckey-{{ checksum "/tmp/platform-os" }}-{{ checksum "package.json" }}
   - &install-dependencies
@@ -91,23 +95,79 @@ aliases:
       name: Show AWS S3 buckets
       command: aws s3 ls
 
-jobs:
-  build:
-    # call executor define at top
-    executor: docker-executor
+# --------------------------------------------------
+# commands: common full steps block
+# --------------------------------------------------
+commands:
+  # checkout branch and run install deps with caching based on runtime platform os
+  checkout-install-deps:
+    parameters:
+      os:
+        type: string
     steps:
       - checkout # Checkout this branch
       - *echo-some-stuff # call alias with "*"
+      - run: echo "Platform OS = << parameters.os >>"
+      - run: echo "<< parameters.os >>" > /tmp/platform-os
       - *restore-cache
       - *install-dependencies
-      - *install-dpkg-fakeroot
       - *save-cache
+  # build and run makers to package (zip) electron app for runtime platform os
+  build:
+    parameters:
+      os:
+        type: string
+    steps:
+      - checkout-install-deps
+          os: << parameters.os >>
       - run:
           name: Generate Builds
           command: npm run make
       - store_artifacts:
           path: ~/repo/out/make
+      - persist_to_workspace:
+          root: out
+          paths:
+            - make
       - *run-jest-unit-test
+
+# --------------------------------------------------
+# jobs: different jobs configurations
+# --------------------------------------------------
+jobs:
+  # job: build electron app on macos
+  build-macos:
+    # call executor define at top with parameter value pass (not really used)
+    executor: 
+      name: macos-executor
+      os: macos
+    steps:
+      # Commands will execute in macOS container
+      # with Xcode 14.2.0 installed
+      - run: 
+          name: Show xcodebuild version
+          command: xcodebuild -version    
+      - build:
+          os: $MAC_OS_STRING
+
+  build-linux:
+    # call executor define at top
+    executor: docker-executor
+    steps:
+      - build:
+          os: "linux"
+
+  playwright-macos:
+    executor: macos-executor
+    steps:
+      - checkout-install-deps
+          os: $MAC_OS_STRING
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: ~/repo/out
+      # unzip app file
+      # test local to read from unzip app file
+      # run test here
 
   deploy-to-aws-s3:
     # call executor define at top
@@ -151,35 +211,15 @@ jobs:
             else
               aws cloudfront create-invalidation --distribution-id ${AWS_DISTRIBUTION_ID_DEV} --paths /\*
             fi
-  build-macos:
-    # call executor define at top
-    executor: 
-      name: macos-executor
-      os: macos
-    steps:
-      # Commands will execute in macOS container
-      # with Xcode 14.2.0 installed
-      - run: 
-          name: Show xcodebuild version
-          command: xcodebuild -version    
-      - checkout # Checkout this branch
-      - *echo-some-stuff # call alias with "*"
-      - *restore-cache
-      - *install-dependencies
-      # - *install-dpkg-fakeroot
-      - *save-cache
-      - run:
-          name: Generate Builds
-          command: npm run make
-      - store_artifacts:
-          path: ~/repo/out/make
-      - *run-jest-unit-test
 
+# --------------------------------------------------
+# workflows: 
+# --------------------------------------------------
 workflows:
   build_and_deploy:
     jobs:
       - build-macos
-      # - build
+      # - build-linux
       # - deploy-to-aws-s3:
       #     requires:
       #       - build
