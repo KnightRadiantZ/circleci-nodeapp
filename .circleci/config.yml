@@ -169,7 +169,7 @@ jobs:
       - persist_to_workspace:
           root: out
           paths:
-            - $APP_FOLDER
+            - my-electron-app-darwin-x64
       - *run-jest-unit-test
 
   # build-linux:
