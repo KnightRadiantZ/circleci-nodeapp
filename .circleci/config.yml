@@ -163,6 +163,7 @@ jobs:
           path: ~/repo/out/make
       - run:
           command: |
+            ls -ltR ~/repo/out
             export APP_FOLDER="$(basename out/make/zip/darwin/x64/*.zip .zip)"
             echo $APP_FOLDER
       - persist_to_workspace:
