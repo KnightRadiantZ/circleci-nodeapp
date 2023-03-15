@@ -168,6 +168,7 @@ jobs:
           command: |
             ls -ltR ~/proj/out
             mkdir ~/proj/out/screenshot
+            mkdir ~/proj/out/report
       - run: 
           name: Run ui e2e tests using playwright
           command: | 
