@@ -102,7 +102,7 @@ commands:
   # checkout branch and run install deps with caching based on runtime platform os
   checkout-install-deps:
     parameters:
-      os:
+      os1:
         type: string
     steps:
       - checkout # Checkout this branch
@@ -119,7 +119,7 @@ commands:
         type: string
     steps:
       - checkout-install-deps
-          os: << parameters.os >>
+          os1: << parameters.os >>
       - run:
           name: Generate Builds
           command: npm run make
