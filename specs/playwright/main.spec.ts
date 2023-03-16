@@ -53,20 +53,21 @@ test.afterAll(async () => {
 
 // test hook  
 test.only('As a user: Test I can launch app, type text into input and verify displayed text', async () => {
+	const SCREENSHOT_PATH = 'out/report/screenshot'
 	console.log('Starting test...');
 	const window = await electronApp.firstWindow();
 	// await window.waitForTimeout(1000);
 
 	await window.waitForSelector('h1');
 	const text1 = await window.$eval('[data-qa="title"]', (el) => el.textContent);
-	await window.screenshot({ path: 'out/screenshot/window1-screenshot.png' });
+	await window.screenshot({ path: `${SCREENSHOT_PATH}/window1-screenshot.png` });
 	expect(text1).toContain('Hello World!');
 
 	const textToType = `Hello Universe! ${new Date()}`;
 	await window.type('[data-qa="textInput"]', textToType);
 	await window.click('[data-qa="displayTextButton"]');
 	const text2 = await window.$eval('#displayDiv', (el) => el.textContent);
-	await window.screenshot({ path: 'out/screenshot/window2-screenshot.png' });
+	await window.screenshot({ path: `${SCREENSHOT_PATH}/window2-screenshot.png` });
 	expect(text2).toContain(textToType);
 
 // Click on Canvases in sidebar
