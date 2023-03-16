@@ -167,17 +167,17 @@ jobs:
           name: See attached workspace and create screenshot dir
           command: |
             ls -ltR ~/proj/out
-            mkdir ~/proj/out/screenshot
-            mkdir ~/proj/out/report
+            mkdir -p ~proj/out/{report,screenshot}
+            mkdir -p ~proj/out/report/{html,xml}
       - run: 
           name: Run ui e2e tests using playwright
           command: | 
             npm run
             npm run pw-test
       - store_artifacts:
-          path: ~/proj/out/screenshot
+          path: ~/proj/out/report/html
       - store_test_results:
-          path: out/report
+          path: out/report/xml
 
   # --------------------------------------------------
   # linux jobs: different jobs configurations for linux
