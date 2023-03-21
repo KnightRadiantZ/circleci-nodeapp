@@ -14,6 +14,11 @@ let electronApp: ElectronApplication
 
 let page: Page
 
+const SCREENSHOT_PATH = 'out/report/screenshot'
+const TEXT1 = `Hello Mars! ${new Date()}`;
+const TEXT2 = `Hello Universe! ${new Date()}`;
+
+
 // before all hook
 test.beforeAll(async () => {
 	// use helpers to auto find latest build
@@ -51,25 +56,43 @@ test.afterAll(async () => {
 	await electronApp.close()
   })
 
-// test hook  
-test.only('As a user: Test I can launch app, type text into input and verify displayed text', async () => {
-	const SCREENSHOT_PATH = 'out/report/screenshot'
-	console.log('Starting test...');
+// test hooks
+test('As a user: Test I can launch app and verify app is visible', async () => {
 	const window = await electronApp.firstWindow();
-	// await window.waitForTimeout(1000);
 
 	await window.waitForSelector('h1');
 	const text1 = await window.$eval('[data-qa="title"]', (el) => el.textContent);
 	await window.screenshot({ path: `${SCREENSHOT_PATH}/window1-screenshot.png` });
 	expect(text1).toContain('Hello World!');
+})
 
-	const textToType = `Hello Universe! ${new Date()}`;
-	await window.type('[data-qa="textInput"]', textToType);
+test('As a user: Test I can type text into input and verify displayed text', async () => {
+	const window = await electronApp.firstWindow();
+
+	await window.type('[data-qa="textInput"]', TEXT1);
 	await window.click('[data-qa="displayTextButton"]');
 	const text2 = await window.$eval('#displayDiv', (el) => el.textContent);
 	await window.screenshot({ path: `${SCREENSHOT_PATH}/window2-screenshot.png` });
-	expect(text2).toContain(textToType);
+	expect(text2).toContain(TEXT1);
+})
 
+test('As a user: Test I can clear, re-type text input and verify a different displayed text', async () => {
+	const window = await electronApp.firstWindow();
+
+	await window.fill('[data-qa="textInput"]', '');
+	await window.click('[data-qa="displayTextButton"]');
+	const text1 = await window.$eval('#displayDiv', (el) => el.textContent);
+	await window.screenshot({ path: `${SCREENSHOT_PATH}/window3-screenshot.png` });
+	expect(text1).not.toContain(TEXT1);
+
+	await window.type('[data-qa="textInput"]', TEXT2);
+	await window.click('[data-qa="displayTextButton"]');
+	const text2 = await window.$eval('#displayDiv', (el) => el.textContent);
+	await window.screenshot({ path: `${SCREENSHOT_PATH}/window4-screenshot.png` });
+	expect(text2).toContain(TEXT2);
+})
+
+test.skip('As a user: Test I can do something else', async () => {
 // Click on Canvases in sidebar
 // const canvasTitle = `Canvas title Demo 12345`;
 // await window1.click('[data-qa="virtual-list-item"]:has([data-qa="channel_sidebar_name_page_pbrowse-quip-files"])');
