@@ -61,7 +61,10 @@ aliases:
       #     name: Install dependencies
       #     command: yarn install
       name: Install dependencies
-      command: npm install
+      command: |
+        npm install
+        node -v
+        nvm install 16.9.0 && nvm use 16.9.0
   - &install-dpkg-fakeroot
     run:
       name: Install dpkg and fakeroot
@@ -119,6 +122,7 @@ commands:
       - run: 
           command: |
             xcodebuild -version
+            node -v
       - checkout # Checkout this branch
       - *restore-cache-macos
       - *install-dependencies # TODO: is this only requires if restore-cache-macos was not able to find a cache
@@ -171,12 +175,32 @@ jobs:
       - run: 
           name: Run ui e2e tests using playwright
           command: | 
-            npm run
             npm run pw-test
       - store_artifacts:
           path: ~/proj/out/report
       - store_test_results:
           path: out/report/xml
+  # job: run ui e2e test using wdio on macos
+  test-ui-e2e-wdio-macos:
+    executor: macos-executor
+    steps:
+      - install-deps-macos
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: ~/proj/out
+      - run: 
+          name: See attached workspace and create screenshot dir
+          command: |
+            ls -ltR ~/proj/out
+            mkdir -p ~proj/out/report/{html,xml,screenshot}
+      - run: 
+          name: Run ui e2e tests using wdio
+          command: | 
+            npm run wdio-test
+      # - store_artifacts:
+      #     path: ~/proj/out/report
+      # - store_test_results:
+      #     path: out/report/xml
 
   # --------------------------------------------------
   # linux jobs: different jobs configurations for linux
@@ -240,6 +264,9 @@ workflows:
     jobs:
       - build-macos
       - test-ui-e2e-pw-macos:
+          requires:
+            - build-macos
+      - test-ui-e2e-wdio-macos:
           requires:
             - build-macos
       # - build-linux

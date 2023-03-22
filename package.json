@@ -7,6 +7,7 @@
   "scripts": {
     "unit-test": "jest --verbose ./specs/jest",
     "pw-test": "npx playwright test",
+    "wdio-test": "npx wdio run ./wdio.conf.js",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
@@ -37,7 +38,13 @@
     "playwright": "^1.28.1",
     "playwright-core": "^1.28.1",
     "@playwright/test": "^1.28.1",
-    "electron-playwright-helpers": "^1.2.2"
+    "electron-playwright-helpers": "^1.2.2",
+    "@wdio/cli": "^8.6.7",
+    "@wdio/sync": "^7.27.0",
+    "webdriverio": "^8.6.7",
+    "@wdio/local-runner": "^8.6.7",
+    "@wdio/mocha-framework": "^8.6.6",
+    "@wdio/spec-reporter": "^8.6.6"
   },
   "config": {
     "forge": {
