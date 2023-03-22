@@ -1,13 +1,14 @@
 import { expect, test } from '@playwright/test'
-import { 
-  clickMenuItemById,
-  findLatestBuild, 
-  ipcMainCallFirstListener, 
-  ipcRendererCallFirstListener, 
-  parseElectronApp,
-  ipcMainInvokeHandler,
-  ipcRendererInvoke
-} from 'electron-playwright-helpers'
+import { findLatestBuild, parseElectronApp } from 'electron-playwright-helpers/dist'
+// import { 
+//   clickMenuItemById,
+//   findLatestBuild, 
+//   ipcMainCallFirstListener, 
+//   ipcRendererCallFirstListener, 
+//   parseElectronApp,
+//   ipcMainInvokeHandler,
+//   ipcRendererInvoke
+// } from 'electron-playwright-helpers'
 import { ElectronApplication, Page, _electron as electron } from 'playwright'
 
 let electronApp: ElectronApplication
