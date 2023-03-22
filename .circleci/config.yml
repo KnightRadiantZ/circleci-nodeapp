@@ -314,21 +314,21 @@ workflows:
       #       branches:
       #         only:
       #           - master
-  macos-wdio-tests:
+  poc-macos-wdio-tests:
     jobs:
       - build-macos
       - test-ui-e2e-wdio-macos:
           requires:
             - build-macos
-  macos-pw-tests:
+  poc-macos-pw-tests:
     jobs:
       - build-macos
       - test-ui-e2e-pw-macos:
           requires:
             - build-macos
-  winos-wdio-tests:
+  poc-winos-wdio-tests:
     jobs:
       - build-linux
-  winos-pw-tests:
+  poc-winos-pw-tests:
     jobs:
       - build-linux
