@@ -1,6 +1,7 @@
 version: 2.1
 
 anchors:
+  # JE: this was taken from slack-desktop to test a change we might need to do in there
   # To implement tag-triggered workflows:
   #
   # 1. Add a `when:` property to the top level of the workflow object,
@@ -11,9 +12,12 @@ anchors:
   #    CircleCI jobs ignore tag triggers by default, and there is no
   #    workflow-level setting that lets you enable tag triggers.
   filters-tag-triggered-workflow-job: &filters-tag-triggered-workflow-job
+    # filters like this are only applied on job level in the workflow
     filters:
       tags:
         only: /.*/
+      branches:
+        ignore: some-branch
        
 # --------------------------------------------------
 # executors: common execution environment
