@@ -284,8 +284,8 @@ workflows:
   build-test-app-macos:
     jobs:
       - build-macos:
-          <<: *filters-tag-triggered-workflow-job
           <<: *filters-ignore-branch
+          <<: *filters-tag-triggered-workflow-job
       - test-ui-e2e-pw-macos:
           <<: *filters-ignore-branch
           requires:
