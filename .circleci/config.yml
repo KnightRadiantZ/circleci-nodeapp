@@ -320,3 +320,6 @@ workflows:
       - test-ui-e2e-wdio-macos:
           requires:
             - build-macos
+  dummy-workflow-2-for-testing:
+    jobs:
+      - build-linux
