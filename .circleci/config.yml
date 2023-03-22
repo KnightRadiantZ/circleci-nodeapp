@@ -63,8 +63,6 @@ aliases:
       name: Install dependencies
       command: |
         npm install
-        node -v
-        nvm install 16.9.0 && nvm use 16.9.0
   - &install-dpkg-fakeroot
     run:
       name: Install dpkg and fakeroot
