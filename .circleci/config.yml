@@ -103,8 +103,12 @@ aliases:
       name: Show AWS S3 buckets
       command: aws s3 ls
 
+# --------------------------------------------------
+# anchors: common stuff
+# - TODO: read more on doc
+# --------------------------------------------------
+# JE: this was taken from slack-desktop to test a change we might need to do in there
 anchors:
-  # JE: this was taken from slack-desktop to test a change we might need to do in there
   # To implement tag-triggered workflows:
   #
   # 1. Add a `when:` property to the top level of the workflow object,
@@ -119,7 +123,7 @@ anchors:
     filters:
       tags:
         only: /.*/
-  filters-ignore-branch: &filters-ignore-branch
+  filters-ignore-branches: &filters-ignore-branches
     filters:
       branches:
         ignore: some-branch-1
@@ -284,18 +288,18 @@ workflows:
   build-test-app-macos:
     jobs:
       - build-macos:
-          <<: *filters-ignore-branch
+          <<: *filters-ignore-branches
           <<: *filters-tag-triggered-workflow-job
       - test-ui-e2e-pw-macos:
-          <<: *filters-ignore-branch
+          <<: *filters-ignore-branches
           requires:
             - build-macos
       - test-ui-e2e-wdio-macos:
-          <<: *filters-ignore-branch
+          <<: *filters-ignore-branches
           requires:
             - build-macos
       - build-linux:
-          <<: *filters-ignore-branch
+          <<: *filters-ignore-branches
       # - deploy-to-aws-s3:
       #     requires:
       #       - build
@@ -310,3 +314,9 @@ workflows:
       #       branches:
       #         only:
       #           - master
+  dummy-workflow-for-testing:
+    jobs:
+      - build-macos
+      - test-ui-e2e-wdio-macos:
+          requires:
+            - build-macos
