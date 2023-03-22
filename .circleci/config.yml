@@ -120,7 +120,7 @@ anchors:
       tags:
         only: /.*/
       branches:
-        ignore: some-branch
+        ignore: some-branch-1
        
 # --------------------------------------------------
 # commands: common full steps block
@@ -176,6 +176,18 @@ jobs:
           paths:
             - my-electron-app-darwin-x64
       - *run-jest-unit-test
+
+  # --------------------------------------------------
+  # linux jobs: different jobs configurations for linux
+  # --------------------------------------------------
+  # job: build electron app on linux
+  build-linux:
+    # call executor define at top
+    executor: docker-executor
+    steps:
+      - *echo-some-stuff # call alias with "*"
+      - checkout # Checkout this branch
+
   # job: run ui e2e test using playwright on macos
   test-ui-e2e-pw-macos:
     executor: macos-executor
@@ -197,6 +209,7 @@ jobs:
           path: ~/proj/out/report
       - store_test_results:
           path: out/report/xml
+
   # job: run ui e2e test using wdio on macos
   test-ui-e2e-wdio-macos:
     executor: macos-executor
@@ -218,17 +231,6 @@ jobs:
       #     path: ~/proj/out/report
       # - store_test_results:
       #     path: out/report/xml
-
-  # --------------------------------------------------
-  # linux jobs: different jobs configurations for linux
-  # --------------------------------------------------
-  # job: build electron app on linux
-  # build-linux:
-  #   # call executor define at top
-  #   executor: docker-executor
-  #   steps:
-  #     - build:
-  #         os: "linux"
 
   deploy-to-aws-s3:
     # call executor define at top
@@ -279,16 +281,15 @@ jobs:
 workflows:
   build-test-app-macos:
     jobs:
-      - build-macos
-      - test-ui-e2e-pw-macos:
+      - build-macos:
           <<: *filters-tag-triggered-workflow-job
+      - test-ui-e2e-pw-macos:
           requires:
             - build-macos
       - test-ui-e2e-wdio-macos:
-          <<: *filters-tag-triggered-workflow-job
           requires:
             - build-macos
-      # - build-linux
+      - build-linux
       # - deploy-to-aws-s3:
       #     requires:
       #       - build
