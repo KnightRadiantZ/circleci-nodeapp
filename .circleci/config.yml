@@ -314,12 +314,21 @@ workflows:
       #       branches:
       #         only:
       #           - master
-  dummy-workflow-for-testing:
+  macos-wdio-tests:
     jobs:
       - build-macos
       - test-ui-e2e-wdio-macos:
           requires:
             - build-macos
-  dummy-workflow-2-for-testing:
+  macos-pw-tests:
+    jobs:
+      - build-macos
+      - test-ui-e2e-pw-macos:
+          requires:
+            - build-macos
+  winos-wdio-tests:
+    jobs:
+      - build-linux
+  winos-pw-tests:
     jobs:
       - build-linux
