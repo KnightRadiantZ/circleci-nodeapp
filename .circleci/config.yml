@@ -119,6 +119,8 @@ anchors:
     filters:
       tags:
         only: /.*/
+  filters-ignore-branch: &filters-ignore-branch
+    filters:
       branches:
         ignore: some-branch-1
        
@@ -283,6 +285,7 @@ workflows:
     jobs:
       - build-macos:
           <<: *filters-tag-triggered-workflow-job
+          <<: *filters-ignore-branch
       - test-ui-e2e-pw-macos:
           requires:
             - build-macos
@@ -290,6 +293,7 @@ workflows:
           requires:
             - build-macos
       - build-linux
+          <<: *filters-ignore-branch
       # - deploy-to-aws-s3:
       #     requires:
       #       - build
