@@ -292,7 +292,7 @@ workflows:
       - test-ui-e2e-wdio-macos:
           requires:
             - build-macos
-      - build-linux
+      - build-linux:
           <<: *filters-ignore-branch
       # - deploy-to-aws-s3:
       #     requires:
