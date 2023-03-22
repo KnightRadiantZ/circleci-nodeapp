@@ -287,9 +287,11 @@ workflows:
           <<: *filters-tag-triggered-workflow-job
           <<: *filters-ignore-branch
       - test-ui-e2e-pw-macos:
+          <<: *filters-ignore-branch
           requires:
             - build-macos
       - test-ui-e2e-wdio-macos:
+          <<: *filters-ignore-branch
           requires:
             - build-macos
       - build-linux:
