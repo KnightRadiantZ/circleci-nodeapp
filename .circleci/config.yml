@@ -1,5 +1,20 @@
 version: 2.1
 
+anchors:
+  # To implement tag-triggered workflows:
+  #
+  # 1. Add a `when:` property to the top level of the workflow object,
+  #    specifying which tag or tag patterns should trigger the workflow. See
+  #    nightly and run-release-build for examples.
+  #
+  # 2. Add the following anchor to every job in the workflow. Unfortunately,
+  #    CircleCI jobs ignore tag triggers by default, and there is no
+  #    workflow-level setting that lets you enable tag triggers.
+  filters-tag-triggered-workflow-job: &filters-tag-triggered-workflow-job
+    filters:
+      tags:
+        only: /.*/
+       
 # --------------------------------------------------
 # executors: common execution environment
 # --------------------------------------------------
@@ -22,7 +37,7 @@ executors:
       xcode: "14.2.0"
     resource_class: macos.x86.medium.gen2
     working_directory: ~/proj
-
+ 
 # --------------------------------------------------
 # aliases: common steps
 # - use & to define alias and * to access it
@@ -103,20 +118,6 @@ aliases:
       name: Show AWS S3 buckets
       command: aws s3 ls
 
-anchors:
-  # To implement tag-triggered workflows:
-  #
-  # 1. Add a `when:` property to the top level of the workflow object,
-  #    specifying which tag or tag patterns should trigger the workflow. See
-  #    nightly and run-release-build for examples.
-  #
-  # 2. Add the following anchor to every job in the workflow. Unfortunately,
-  #    CircleCI jobs ignore tag triggers by default, and there is no
-  #    workflow-level setting that lets you enable tag triggers.
-  filters-tag-triggered-workflow-job: &filters-tag-triggered-workflow-job
-    filters:
-      tags:
-        only: /.*/
 # --------------------------------------------------
 # commands: common full steps block
 # --------------------------------------------------
