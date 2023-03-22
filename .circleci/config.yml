@@ -126,7 +126,7 @@ anchors:
   filters-ignore-branches: &filters-ignore-branches
     filters:
       branches:
-        ignore: some-branch-1
+        ignore: poc-wdio-vs-pw
        
 # --------------------------------------------------
 # commands: common full steps block
