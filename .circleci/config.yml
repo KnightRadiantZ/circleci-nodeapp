@@ -126,11 +126,11 @@ anchors:
   ignore-poc-branches: &ignore-poc-branches
     filters:
       branches:
-        ignore: poc-wdio-vs-pw
+        ignore: poc-oj-vs-pw
   only-poc-branches: &only-poc-branches
     filters:
       branches:
-        only: poc-wdio-vs-pw
+        only: poc-oj-vs-pw
        
 # --------------------------------------------------
 # commands: common full steps block
