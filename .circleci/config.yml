@@ -123,10 +123,14 @@ anchors:
     filters:
       tags:
         only: /.*/
-  filters-ignore-branches: &filters-ignore-branches
+  ignore-poc-branches: &ignore-poc-branches
     filters:
       branches:
-        ignore: some-branch-1
+        ignore: poc-wdio-vs-pw
+  only-poc-branches: &only-poc-branches
+    filters:
+      branches:
+        only: poc-wdio-vs-pw
        
 # --------------------------------------------------
 # commands: common full steps block
@@ -210,7 +214,7 @@ jobs:
       - run: 
           name: Run ui e2e tests using playwright
           command: | 
-            npm run pw-test
+            npm run pw-test playwright-test.spec.ts
       - store_artifacts:
           path: ~/proj/out/report
       - store_test_results:
@@ -288,18 +292,18 @@ workflows:
   build-test-app-macos:
     jobs:
       - build-macos:
-          <<: *filters-ignore-branches
+          <<: *ignore-poc-branches
           <<: *filters-tag-triggered-workflow-job
       - test-ui-e2e-pw-macos:
-          <<: *filters-ignore-branches
+          <<: *ignore-poc-branches
           requires:
             - build-macos
       - test-ui-e2e-wdio-macos:
-          <<: *filters-ignore-branches
+          <<: *ignore-poc-branches
           requires:
             - build-macos
       - build-linux:
-          <<: *filters-ignore-branches
+          <<: *ignore-poc-branches
       # - deploy-to-aws-s3:
       #     requires:
       #       - build
@@ -316,19 +320,25 @@ workflows:
       #           - master
   poc-macos-wdio-tests:
     jobs:
-      - build-macos
+      - build-macos:
+          <<: *only-poc-branches
       - test-ui-e2e-wdio-macos:
+          <<: *only-poc-branches
           requires:
             - build-macos
   poc-macos-pw-tests:
     jobs:
-      - build-macos
+      - build-macos:
+          <<: *only-poc-branches
       - test-ui-e2e-pw-macos:
+          <<: *only-poc-branches
           requires:
             - build-macos
   poc-winos-wdio-tests:
     jobs:
-      - build-linux
+      - build-linux:
+          <<: *only-poc-branches
   poc-winos-pw-tests:
     jobs:
-      - build-linux
+      - build-linux:
+          <<: *only-poc-branches

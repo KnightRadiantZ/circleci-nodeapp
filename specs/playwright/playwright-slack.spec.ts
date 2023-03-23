@@ -1,14 +1,5 @@
 import { expect, test } from '@playwright/test'
 import { findLatestBuild, parseElectronApp } from 'electron-playwright-helpers/dist'
-// import { 
-//   clickMenuItemById,
-//   findLatestBuild, 
-//   ipcMainCallFirstListener, 
-//   ipcRendererCallFirstListener, 
-//   parseElectronApp,
-//   ipcMainInvokeHandler,
-//   ipcRendererInvoke
-// } from 'electron-playwright-helpers'
 import { ElectronApplication, Page, _electron as electron } from 'playwright'
 
 let electronApp: ElectronApplication
@@ -19,13 +10,12 @@ const SCREENSHOT_PATH = 'out/report/screenshot'
 const TEXT1 = `Hello Mars! ${new Date()}`;
 const TEXT2 = `Hello Universe! ${new Date()}`;
 
-
 // before all hook
 test.beforeAll(async () => {
 	// use helpers to auto find latest build
 	// const latestBuild = findLatestBuild()
 	// or just static path to folder
-	const latestBuild = './out/my-electron-app-darwin-x64'
+	const latestBuild = '/Users/jevasco/src/sandbox/circleci-nodeapp/out/slack-app-darwin-x64'
 	console.log(`latestBuild = ${latestBuild}`)
 	// use helpers to parse the directory and find paths and other info
 	const appInfo = parseElectronApp(latestBuild)
@@ -57,40 +47,16 @@ test.afterAll(async () => {
 	await electronApp.close()
   })
 
-// test hooks
-test('As a user: Test I can launch app and verify app is visible', async () => {
+test('As a test: Test I can launch and hook on Slack app', async () => {
 	const window = await electronApp.firstWindow();
-
-	await window.waitForSelector('h1');
-	const text1 = await window.$eval('[data-qa="title"]', (el) => el.textContent);
-	await window.screenshot({ path: `${SCREENSHOT_PATH}/window1-screenshot.png` });
-	expect(text1).toContain('Hello World!');
-})
-
-test('As a user: Test I can type text into input and verify displayed text', async () => {
-	const window = await electronApp.firstWindow();
-
-	await window.type('[data-qa="textInput"]', TEXT1);
-	await window.click('[data-qa="displayTextButton"]');
-	const text2 = await window.$eval('#displayDiv', (el) => el.textContent);
-	await window.screenshot({ path: `${SCREENSHOT_PATH}/window2-screenshot.png` });
-	expect(text2).toContain(TEXT1);
-})
-
-test('As a user: Test I can clear, re-type text input and verify a different displayed text', async () => {
-	const window = await electronApp.firstWindow();
-
-	await window.fill('[data-qa="textInput"]', '');
-	await window.click('[data-qa="displayTextButton"]');
-	const text1 = await window.$eval('#displayDiv', (el) => el.textContent);
-	await window.screenshot({ path: `${SCREENSHOT_PATH}/window3-screenshot.png` });
-	expect(text1).not.toContain(TEXT1);
-
-	await window.type('[data-qa="textInput"]', TEXT2);
-	await window.click('[data-qa="displayTextButton"]');
-	const text2 = await window.$eval('#displayDiv', (el) => el.textContent);
-	await window.screenshot({ path: `${SCREENSHOT_PATH}/window4-screenshot.png` });
-	expect(text2).toContain(TEXT2);
+	const url = window.url()?.split('/').pop()
+	console.log(`Window opened: ${url}`); // old-joe workspace: THWUCHYD6
+	// await window.waitForTimeout(10000);
+	// await window.goto('https://app.slack.com/client/T016TPDB2HM');
+	// await window.click('[data-qa="ssb-signin-btn"]');
+	await window.click('[data-qa="channel_sidebar_name_page_psaved"]');
+	await window.screenshot({ path: `${SCREENSHOT_PATH}/slack1-screenshot.png` });
+	await window.waitForTimeout(2000);
 })
 
 test.skip('As a user: Test I can do something else', async () => {
