@@ -320,20 +320,20 @@ workflows:
       #           - master
   poc-macos-wdio-tests:
     jobs:
-      - build-macos:
-          <<: *only-poc-branches
+      # - build-macos:
+      #     <<: *only-poc-branches
       - test-ui-e2e-wdio-macos:
           <<: *only-poc-branches
-          requires:
-            - build-macos
+          # requires:
+          #   - build-macos
   poc-macos-pw-tests:
     jobs:
-      - build-macos:
-          <<: *only-poc-branches
+      # - build-macos:
+      #     <<: *only-poc-branches
       - test-ui-e2e-pw-macos:
           <<: *only-poc-branches
-          requires:
-            - build-macos
+          # requires:
+          #   - build-macos
   poc-winos-wdio-tests:
     jobs:
       - build-linux:
