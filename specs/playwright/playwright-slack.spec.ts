@@ -19,13 +19,21 @@ test.beforeAll(async () => {
 	console.log(`latestBuild = ${latestBuild}`)
 	// use helpers to parse the directory and find paths and other info
 	const appInfo = parseElectronApp(latestBuild)
-	// console.log(`appInfo = ${JSON.stringify(appInfo)}`)
+	console.log(`appInfo = ${JSON.stringify(appInfo)}`)
 	// launch app
 	electronApp = await electron.launch({
 	  executablePath: appInfo.executable,
 	  args: [appInfo.main]
 	})
-	// do some checks to make sure app launched 
+	//-----------------------------------------------------------
+	// JE: another way to start slack app using electron app, this was used in prev. POC 
+	// - you can launch this in cli > /Users/jevasco/src/slack-desktop/node_modules/electron/dist/Electron.app/Contents/MacOS/Electron /Users/jevasco/src/slack-desktop/.
+	// - this is essentially in dev mode and does not go to the build/package process which means it is not same binary we serve to our customer
+	//-----------------------------------------------------------
+	// electronApp = await electron.launch({
+	// 	args: ['/Users/jevasco/src/slack-desktop/.'],
+	// });
+	// do some checks to make sure app launched - test
 	electronApp.on('window', async (page) => {
 	  const url = page.url()?.split('/').pop()
 	  console.log(`Window opened: ${url}`)  
